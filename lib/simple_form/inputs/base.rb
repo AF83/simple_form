@@ -146,9 +146,32 @@ module SimpleForm
         lookups = []
         lookups << :"#{object_name}.#{lookup_action}.#{reflection_or_attribute_name}"
         lookups << :"#{object_name}.#{reflection_or_attribute_name}"
+        if object_name.to_s =~ /\[\d+\]/
+          lookups << :"#{object_name_without_index}.#{lookup_action}.#{reflection_or_attribute_name}"
+          lookups << :"#{object_name_without_index}.#{reflection_or_attribute_name}"
+        end 
         lookups << :"#{reflection_or_attribute_name}"
         lookups << default
+        $stderr.puts object_name.inspect
+        $stderr.puts lookups.inspect
         I18n.t(lookups.shift, :scope => :"simple_form.#{namespace}", :default => lookups).presence
+      end
+
+      # Remove indexes from object_name on has_many associations
+      # This is usefull to add lookup for I18n labels
+      #
+      # Example :
+      #
+      #    simple_form:
+      #      labels:
+      #        user:
+      #          new:
+      #            profiles_attributes:
+      #              email: 'E-mail para efetuar o sign in.'
+      # 
+      def object_name_without_index
+        object_name.to_s.gsub(/\[\d+\]$/, '').
+          gsub(/\[([a-z0-9_]+)\]/, ".\\1").to_sym
       end
 
       # The action to be used in lookup.
