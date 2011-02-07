@@ -152,8 +152,6 @@ module SimpleForm
         end 
         lookups << :"#{reflection_or_attribute_name}"
         lookups << default
-        $stderr.puts object_name.inspect
-        $stderr.puts lookups.inspect
         I18n.t(lookups.shift, :scope => :"simple_form.#{namespace}", :default => lookups).presence
       end
 
