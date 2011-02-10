@@ -82,6 +82,17 @@ class LabelTest < ActionView::TestCase
     end
   end
 
+  test 'label should use i18n based on nested model and attribute without using index to lookup translation on has_one association' do
+    store_translations(:en, :simple_form => { :labels => { :user => {
+      :profile_attributes => {
+        :lastname => 'Nom'
+      }
+    } } } ) do
+      with_label_for :"user[profile_attributes]", :lastname, :text
+      assert_select 'label[for=user_profile_attributes_lastname]', /Nom/
+    end
+  end
+
   test 'input should use i18n based only on attribute to lookup translation' do
     store_translations(:en, :simple_form => { :labels => { :age => 'Idade' } } ) do
       with_label_for @user, :age, :integer

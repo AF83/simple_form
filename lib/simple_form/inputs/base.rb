@@ -146,7 +146,7 @@ module SimpleForm
         lookups = []
         lookups << :"#{object_name}.#{lookup_action}.#{reflection_or_attribute_name}"
         lookups << :"#{object_name}.#{reflection_or_attribute_name}"
-        if object_name.to_s =~ /\[\d+\]/
+        if object_name.to_s =~ /\[.+\]/
           lookups << :"#{object_name_without_index}.#{lookup_action}.#{reflection_or_attribute_name}"
           lookups << :"#{object_name_without_index}.#{reflection_or_attribute_name}"
         end 
