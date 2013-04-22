@@ -8,15 +8,18 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.summary     = "Forms made easy!"
   s.email       = "contact@plataformatec.com.br"
-  s.homepage    = "http://github.com/plataformatec/simple_form"
+  s.homepage    = "https://github.com/plataformatec/simple_form"
   s.description = "Forms made easy!"
-  s.authors     = ['José Valim', 'Carlos Antônio']
+  s.authors     = ['José Valim', 'Carlos Antônio', 'Rafael França']
+  s.license     = "MIT"
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.files         = Dir["CHANGELOG.md", "MIT-LICENSE", "README.md", "lib/**/*"]
+  s.test_files    = Dir["test/**/*.rb"]
   s.test_files   -= Dir["test/support/country_select/**/*"]
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.rubyforge_project = "simple_form"
+
+  s.add_dependency('activemodel', '>= 4.0.0.beta', '< 4.1')
+  s.add_dependency('actionpack', '>= 4.0.0.beta', '< 4.1')
 end

@@ -1,6 +1,6 @@
 module SimpleForm
   module Inputs
-    class PriorityInput < CollectionInput
+    class PriorityInput < CollectionSelectInput
       def input
         @builder.send(:"#{input_type}_select", attribute_name, input_priority,
                       input_options, input_html_options)
@@ -10,7 +10,7 @@ module SimpleForm
         options[:priority] || SimpleForm.send(:"#{input_type}_priority")
       end
 
-    protected
+      protected
 
       def has_required?
         false

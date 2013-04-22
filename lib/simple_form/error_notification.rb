@@ -1,7 +1,6 @@
 module SimpleForm
   class ErrorNotification
-    delegate :object, :object_name, :template, :to => :@builder
-    include SimpleForm::HasErrors
+    delegate :object, :object_name, :template, to: :@builder
 
     def initialize(builder, options)
       @builder = builder
@@ -17,8 +16,16 @@ module SimpleForm
 
     protected
 
+    def errors
+      object.errors
+    end
+
+    def has_errors?
+      object && object.respond_to?(:errors) && errors.present?
+    end
+
     def error_message
-      @message || translate_error_notification
+      (@message || translate_error_notification).html_safe
     end
 
     def error_notification_tag
@@ -27,7 +34,6 @@ module SimpleForm
 
     def html_options
       @options[:class] = "#{SimpleForm.error_notification_class} #{@options[:class]}".strip
-      @options[:id] = SimpleForm.error_notification_id if SimpleForm.error_notification_id
       @options
     end
 
@@ -35,8 +41,8 @@ module SimpleForm
       lookups = []
       lookups << :"#{object_name}"
       lookups << :default_message
-      lookups << "Some errors were found, please take a look:"
-      I18n.t(lookups.shift, :scope => :"simple_form.error_notification", :default => lookups)
+      lookups << "Please review the problems below:"
+      I18n.t(lookups.shift, scope: :"simple_form.error_notification", default: lookups)
     end
   end
 end

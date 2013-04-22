@@ -4,10 +4,10 @@ require 'bundler'
 Bundler::GemHelper.install_tasks
 
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 desc 'Default: run unit tests.'
-task :default => :test
+task default: :test
 
 desc 'Test the simple_form plugin.'
 Rake::TestTask.new(:test) do |t|
@@ -18,10 +18,10 @@ Rake::TestTask.new(:test) do |t|
 end
 
 desc 'Generate documentation for the simple_form plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
+RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'SimpleForm'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README.rdoc')
+  rdoc.options << '--line-numbers'
+  rdoc.rdoc_files.include('README.md')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

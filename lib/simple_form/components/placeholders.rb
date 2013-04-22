@@ -1,21 +1,15 @@
 module SimpleForm
   module Components
+    # Needs to be enabled in order to do automatic lookups.
     module Placeholders
       def placeholder
-        input_html_options[:placeholder] ||= placeholder_text if has_placeholder?
+        input_html_options[:placeholder] ||= placeholder_text
         nil
       end
 
-      def has_placeholder?
-        false
-      end
-
-      def placeholder_present?
-        options[:placeholder] != false && placeholder_text.present?
-      end
-
       def placeholder_text
-        @placeholder ||= options[:placeholder] || translate(:placeholders)
+        placeholder = options[:placeholder]
+        placeholder.is_a?(String) ? placeholder : translate(:placeholders)
       end
     end
   end

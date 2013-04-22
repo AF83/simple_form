@@ -5,19 +5,19 @@ module SimpleForm
         @builder.send(:"#{input_type}_select", attribute_name, input_options, input_html_options)
       end
 
-    private
-
-      def has_required?
-        false
-      end
+      private
 
       def label_target
-        case input_type
+        position = case input_type
         when :date, :datetime
-          "#{attribute_name}_1i"
-        when :time
-          "#{attribute_name}_4i"
+          date_order = input_options[:order] || I18n.t('date.order')
+          date_order.first
+        else
+          :hour
         end
+
+        position = ActionView::Helpers::DateTimeSelector::POSITION[position]
+        "#{attribute_name}_#{position}i"
       end
     end
   end

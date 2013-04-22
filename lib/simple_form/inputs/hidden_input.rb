@@ -1,16 +1,13 @@
 module SimpleForm
   module Inputs
     class HiddenInput < Base
-      def render
+      disable :label, :errors, :hint, :required
+
+      def input
         @builder.hidden_field(attribute_name, input_html_options)
       end
-      alias :input :render
 
-    protected
-
-      def attribute_required?
-        false
-      end
+      private
 
       def required_class
         nil

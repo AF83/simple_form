@@ -1,13 +1,11 @@
-source "http://rubygems.org"
+source 'https://rubygems.org'
 
-gem "rails", "~> 3.0.0"
+gemspec
 
-group :test do
-  gem "mocha", :require => false
-
-  if RUBY_VERSION < "1.9"
-    gem "ruby-debug", :require => false
-  else
-    gem "test-unit", :require => false
-  end
-end
+gem 'country_select', '~> 1.1.1'
+gem 'railties', '>= 4.0.0.beta1', '< 4.1'
+gem 'activemodel', '>= 4.0.0.beta1', '< 4.1'
+gem 'actionpack', '>= 4.0.0.beta1', '< 4.1'
+gem 'rake'
+gem 'rdoc'
+gem 'tzinfo'

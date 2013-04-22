@@ -7,16 +7,14 @@ module SimpleForm
       # "simple_form.no" keys. See the example locale file.
       def self.boolean_collection
         i18n_cache :boolean_collection do
-          [ [I18n.t(:"simple_form.yes", :default => 'Yes'), true],
-            [I18n.t(:"simple_form.no", :default => 'No'), false] ]
+          [ [I18n.t(:"simple_form.yes", default: 'Yes'), true],
+            [I18n.t(:"simple_form.no", default: 'No'), false] ]
         end
       end
 
       def input
-        label_method, value_method = detect_collection_methods
-
-        @builder.send(:"collection_#{input_type}", attribute_name, collection,
-                      value_method, label_method, input_options, input_html_options)
+        raise NotImplementedError,
+          "input should be implemented by classes inheriting from CollectionInput"
       end
 
       def input_options
@@ -25,21 +23,26 @@ module SimpleForm
         options
       end
 
-    protected
+      private
 
       def collection
-        @collection ||= (options.delete(:collection) || self.class.boolean_collection).to_a
+        @collection ||= begin
+          collection = options.delete(:collection) || self.class.boolean_collection
+          collection.respond_to?(:call) ? collection.call : collection.to_a
+        end
       end
 
-      # Select components does not allow the required html tag.
       def has_required?
-        super && input_type != :select
+        super && (input_options[:include_blank] || multiple?)
       end
 
       # Check if :include_blank must be included by default.
       def skip_include_blank?
-        (options.keys & [:prompt, :include_blank, :default, :selected]).any? ||
-          options[:input_html].try(:[], :multiple)
+        (options.keys & [:prompt, :include_blank, :default, :selected]).any? || multiple?
+      end
+
+      def multiple?
+        !!options[:input_html].try(:[], :multiple)
       end
 
       # Detect the right method to find the label and value for a collection.
@@ -59,23 +62,23 @@ module SimpleForm
         [label, value]
       end
 
-      def detect_common_display_methods
-        collection_classes = detect_collection_classes
+      def detect_common_display_methods(collection_classes = detect_collection_classes)
+        collection_translated = translate_collection if collection_classes == [Symbol]
 
-        if collection_classes.include?(Array)
-          { :label => :first, :value => :last }
+        if collection_translated || collection_classes.include?(Array)
+          { label: :first, value: :last }
         elsif collection_includes_basic_objects?(collection_classes)
-          { :label => :to_s, :value => :to_s }
+          { label: :to_s, value: :to_s }
         else
           sample = collection.first || collection.last
 
-          { :label => SimpleForm.collection_label_methods.find { |m| sample.respond_to?(m) },
-            :value => SimpleForm.collection_value_methods.find { |m| sample.respond_to?(m) } }
+          { label: SimpleForm.collection_label_methods.find { |m| sample.respond_to?(m) },
+            value: SimpleForm.collection_value_methods.find { |m| sample.respond_to?(m) } }
         end
       end
 
-      def detect_collection_classes
-        collection.map { |e| e.class }.uniq
+      def detect_collection_classes(some_collection = collection)
+        some_collection.map { |e| e.class }.uniq
       end
 
       def collection_includes_basic_objects?(collection_classes)
@@ -83,6 +86,16 @@ module SimpleForm
           String, Integer, Fixnum, Bignum, Float, NilClass, Symbol, TrueClass, FalseClass
         ]).any?
       end
+
+      def translate_collection
+        if translated_collection = translate(:options)
+          @collection = collection.map do |key|
+            [translated_collection[key] || key, key]
+          end
+          true
+        end
+      end
     end
   end
 end
+
